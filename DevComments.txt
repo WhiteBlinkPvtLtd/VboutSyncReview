@@ -1,0 +1,74 @@
+create table if not exists Journey(
+	Journey_ID text Primary Key,
+	Journey_Name text not null,
+	Vbout_List_ID text unique not null,
+	Vbout_List_Name text not null,
+	Entry_SQL_Query text not null,
+	Exit_SQL_Query text,
+	Date_Created timestamp with time zone default now(),
+	Date_Last_Modified timestamp with time zone default now()
+);
+
+create table if not exists Vbout_Field_Mapping(
+	Mapping_ID serial Primary key,
+	Vbout_List_ID text references Journey(Vbout_List_ID) not null,
+	Vbout_Field_ID text unique not null,
+	Data_Warehouse_Table_Column_Name text not null,
+	isReal text default 'yes',
+	Date_Created timestamp with time zone default now(),
+	Date_Last_Modified timestamp with time zone default now()
+);
+
+create table if not exists Vbout_Journey_Sync_History(
+	Sync_ID serial Primary key,
+	Journey_ID text references Journey(Journey_ID) not null,
+	Total_Rows_Calculated Integer not null,
+	Total_Rows_Synced Integer not null,
+	Sync_Start_Time timestamp with time zone default now(),
+	Sync_End_Time timestamp with time zone default now(),
+	Time_Last_Synced timestamp with time zone default now()
+);
+
+create table if not exists Triggers(
+	id serial Primary key,
+	Journey_ID text references Journey(Journey_ID) not null,
+	trigger_data text not null
+);
+
+create table if not exists RecordType(
+	id text Primary key,
+	name text
+);
+
+
+Sample Journey:------------------------------------------------
+
+Where:
+
+1) Age > 50
+2) Email like gmail
+3) Gender = Male
+
+Fields:
+
+1) ID
+2) Age
+3) Email
+4) Gender
+5) First Name
+6) Last Name
+
+
+Trigger:
+
+1) lastmodifieddate
+
+Base Query= from account where age_at_intake__c > 50 and gender__c == 'Male' and personemail like '%@gmail.com'
+
+Fields:
+1) id - fields[212809]
+2) age_at_intake__c - fields[212810]
+3) personemail - email
+4) gender__c - fields[212811]
+5) firstname - fields[150459]
+6) lastname - fields[150460]
